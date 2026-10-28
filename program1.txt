@@ -1,0 +1,45 @@
+
+def to_8bit_twos_complement(n):
+    """Return the 8-bit two's complement representation."""
+    return format(n & 0xFF, '08b')
+
+
+def signed_value(binary):
+    """Convert an 8-bit binary string to a signed decimal value."""
+    value = int(binary, 2)
+    if value >= 128:
+        value -= 256
+    return value
+
+
+def add_8bit(a, b):
+    """Perform 8-bit addition and detect signed overflow."""
+    bin_a = to_8bit_twos_complement(a)
+    bin_b = to_8bit_twos_complement(b)
+
+    # Keep only the lowest 8 bits of the sum
+    full_sum = int(bin_a, 2) + int(bin_b, 2)
+    result_binary = format(full_sum & 0xFF, '08b')
+    result_decimal = signed_value(result_binary)
+
+    # Signed overflow: same-sign operands, opposite-sign result
+    overflow = (
+        (a >= 0 and b >= 0 and result_decimal < 0)
+        or
+        (a < 0 and b < 0 and result_decimal >= 0)
+    )
+
+    print(f"Operand A: {a:4d} = {bin_a}")
+    print(f"Operand B: {b:4d} = {bin_b}")
+    print(f"Binary addition: {bin_a} + {bin_b}")
+    print(f"Result (8-bit):  {result_binary}")
+    print(f"Result (decimal): {result_decimal}")
+    print(f"Overflow: {'YES' if overflow else 'NO'}")
+    print("-" * 45)
+
+
+print("a) (120 + (+62))")
+add_8bit(120, 62)
+
+print("b) ((-120) + (-62))")
+add_8bit(-120, -62)
